@@ -592,7 +592,7 @@
         steps += '<div class="vt-step vt-step-' + n + '"><div class="vt-step-items">' +
           (items.length ? items.map(function (r) { return podiumCard(r, prev); }).join('')
             : '<div class="vt-podium-empty">' + n + 'º lugar ainda sem projeto</div>') +
-          '</div><div class="vt-step-base" aria-hidden="true">' + n + 'º</div></div>';
+          '</div></div>';
       });
       podium.innerHTML = steps;
       podium.hidden = false;
@@ -1028,7 +1028,10 @@
       entries.forEach(function (en) {
         if (en.isIntersecting) { en.target.classList.add('visible'); io.unobserve(en.target); }
       });
-    }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+    /* threshold 0: basta 1px na tela. Com proporção (ex.: 0.05), blocos mais
+       altos que a tela — como o ranking com 123 projetos no celular — nunca
+       atingiam a fração exigida e ficavam invisíveis para sempre. */
+    }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
     reveals.forEach(function (el) { io.observe(el); });
   } else {
     reveals.forEach(function (el) { el.classList.add('visible'); });
@@ -1042,8 +1045,12 @@
   /* ─── Inicialização ────────────────────────────────────── */
   $('#statProjects').textContent = PROJECTS.length;
 
+  /* As abas de área só aparecem a partir de 768px (ver CSS). Abaixo disso,
+     o ranking volta para "Todas", para nunca ficar filtrado sem controle visível. */
+  var tabsMQ = window.matchMedia('(min-width: 768px)');
+
   var areaParam = getParam('area');
-  if (areaParam && catById[areaParam]) state.tab = areaParam;
+  if (areaParam && catById[areaParam] && tabsMQ.matches) state.tab = areaParam;
   var qParam = getParam('q');
   if (qParam) { state.q = qParam; searchInput.value = qParam; searchClear.hidden = false; }
 
@@ -1054,6 +1061,10 @@
   renderRanking(false);
   renderBottomBar();
   updateFreshness();
+
+  function onTabsMQ() { if (!tabsMQ.matches && state.tab !== 'geral') selectTab('geral', false); }
+  if (tabsMQ.addEventListener) tabsMQ.addEventListener('change', onTabsMQ);
+  else if (tabsMQ.addListener) tabsMQ.addListener(onTabsMQ);
 
   var projParam = getParam('projeto');
   if (projParam) {

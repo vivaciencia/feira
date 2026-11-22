@@ -320,7 +320,7 @@ a, button, [role="tab"], input[type="radio"], input[type="checkbox"], label { cu
 .vt-hero-logo {
     grid-area: logo;
     position: relative;
-    width: 190px;
+    width: 230px;
     aspect-ratio: 1;
     display: grid;
     place-items: center;
@@ -465,18 +465,40 @@ body[data-phase="encerrada"] .vt-live-dot { background: var(--text-muted); }
 body[data-phase="antes"] .vt-live-dot::after,
 body[data-phase="encerrada"] .vt-live-dot::after { display: none; }
 
-@media (max-width: 992px) {
+/* Tablet largo: mantém as duas colunas, só aperta o espaço */
+@media (max-width: 1100px) {
+    .vt-hero-grid { gap: 0 var(--space-xl); }
+    .vt-hero-logo { width: 200px; }
+    .vt-countdown { max-width: 360px; }
+}
+
+/* Tablet e celular: uma coluna, tudo centralizado
+   (logo → chamada → cronômetro), sem mistura de alinhamentos */
+@media (max-width: 880px) {
     .vt-hero-grid {
-        grid-template-columns: 1fr;
-        grid-template-areas: "copy" "logo" "countdown";
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas: "logo" "copy" "countdown";
+        justify-content: stretch;
+        justify-items: center;
         gap: 0;
     }
-    .vt-hero-logo { width: 160px; margin: var(--space-sm) 0 -6px; }
-    .vt-countdown { justify-self: stretch; max-width: none; }
+    .vt-hero-copy { text-align: center; max-width: 640px; }
+    .vt-hero .hero-title { text-align: center; max-width: none; margin-inline: auto; }
+    .vt-hero-badges,
+    .vt-steps,
+    .vt-hero-actions { justify-content: center; }
+    .vt-hero-logo { width: 200px; margin: 0 0 var(--space-md); align-self: center; }
+    .vt-countdown {
+        justify-self: stretch;
+        width: 100%;
+        max-width: 520px;
+        margin: var(--space-2xl) auto 0;
+    }
 }
 
 @media (max-width: 600px) {
     .vt-hero { padding: calc(var(--nav-height) + 16px) 0 96px; }
+    .vt-hero-logo { width: 170px; }
     .vt-step-sep { display: none !important; }
     .vt-hero-actions > a { width: 100%; justify-content: center; }
     .countdown-number { width: 52px; height: 52px; font-size: 1.35rem; }
@@ -622,8 +644,8 @@ body[data-phase="encerrada"] .vt-live-status strong { color: var(--primary); }
 .vt-podium {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-areas: "second first third";
-    align-items: end;
+    grid-template-areas: "first second third";
+    align-items: stretch;
     gap: var(--space-lg);
     margin-bottom: var(--space-xl);
 }
@@ -635,40 +657,12 @@ body[data-phase="encerrada"] .vt-live-status strong { color: var(--primary); }
 
 .vt-step-items { display: flex; flex-direction: column; gap: var(--space-sm); }
 
-.vt-step-base {
-    border-radius: var(--radius-md) var(--radius-md) 0 0;
-    display: grid;
-    place-items: center;
-    font-family: var(--font-heading);
-    font-weight: 800;
-    color: var(--primary);
-    background: linear-gradient(180deg, rgba(34, 61, 115, 0.1), rgba(34, 61, 115, 0.02));
-    font-size: 1.6rem;
-}
-
-/* Degraus em ouro, prata e bronze (mesmo degradê vertical do verde original).
-   Texto escurecido em cada tom para manter contraste ≥ 4.5:1. */
-.vt-step-1 .vt-step-base {
-    height: 88px;
-    font-size: 2rem;
-    color: #5c3d00;
-    background: linear-gradient(180deg, rgba(212, 160, 23, 0.85) 0%, rgba(234, 179, 8, 0.4) 50%, rgba(253, 224, 71, 0.08) 100%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-}
-
-.vt-step-2 .vt-step-base {
-    height: 64px;
-    color: #334155;
-    background: linear-gradient(180deg, rgba(120, 136, 156, 0.75) 0%, rgba(176, 188, 204, 0.42) 50%, rgba(226, 232, 240, 0.1) 100%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-}
-
-.vt-step-3 .vt-step-base {
-    height: 48px;
-    color: #6b2f0b;
-    background: linear-gradient(180deg, rgba(180, 83, 9, 0.6) 0%, rgba(205, 127, 50, 0.3) 50%, rgba(254, 215, 170, 0.08) 100%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-}
+/* Cards do pódio com a mesma altura: o card ocupa toda a coluna e
+   votos + botão ficam colados na base, alinhados entre os três */
+.vt-step-items { flex: 1; }
+.vt-step-items > .vt-podium-card,
+.vt-step-items > .vt-podium-empty { flex: 1; }
+.vt-podium-card .vt-podium-votes { margin-top: auto; }
 
 .vt-podium-card {
     position: relative;
@@ -683,12 +677,37 @@ body[data-phase="encerrada"] .vt-live-status strong { color: var(--primary); }
     min-width: 0;
 }
 
+/* Ouro, prata e bronze no próprio card, em todos os tamanhos de tela.
+   Degradê do tom metálico (topo) ao quase branco (base); textos escuros
+   em cada tom para manter contraste ≥ 4.5:1. */
 .vt-step-1 .vt-podium-card {
-    background: linear-gradient(135deg, #223d73 0%, #384c73 100%);
-    border-color: transparent;
-    color: var(--white);
-    box-shadow: 0 14px 40px rgba(34, 61, 115, 0.28), 0 0 0 1px rgba(128, 191, 65, 0.25);
+    --vt-medal: #8a6200;
+    --vt-medal-ink: #5c3d00;
+    background: linear-gradient(165deg, #f5d36b 0%, #fae7a8 38%, #fffbef 100%);
+    border-color: #e2b84a;
+    box-shadow: 0 14px 40px rgba(212, 160, 23, 0.28);
 }
+
+.vt-step-2 .vt-podium-card {
+    --vt-medal: #55657a;
+    --vt-medal-ink: #334155;
+    background: linear-gradient(165deg, #c9d2dd 0%, #e3e8ee 38%, #fbfcfd 100%);
+    border-color: #b3bfcc;
+    box-shadow: 0 10px 30px rgba(100, 116, 139, 0.2);
+}
+
+.vt-step-3 .vt-podium-card {
+    --vt-medal: #9a4a14;
+    --vt-medal-ink: #6b2f0b;
+    background: linear-gradient(165deg, #e8b48a 0%, #f4d6bd 38%, #fffaf6 100%);
+    border-color: #d59b6b;
+    box-shadow: 0 10px 30px rgba(180, 83, 9, 0.18);
+}
+
+.vt-podium-card .vt-podium-medal { color: var(--vt-medal-ink, var(--text-muted)); }
+.vt-podium-card .vt-podium-medal .vt-i { color: var(--vt-medal, var(--accent-text-light)); }
+.vt-podium-card .vt-cat-tag { background: rgba(255, 255, 255, 0.65); }
+.vt-podium-card .vt-podium-people { border-top-color: rgba(34, 61, 115, 0.12); }
 
 .vt-podium-medal {
     display: inline-flex;
@@ -703,8 +722,6 @@ body[data-phase="encerrada"] .vt-live-status strong { color: var(--primary); }
 }
 
 .vt-podium-medal .vt-i { width: 16px; height: 16px; color: var(--accent-text-light); }
-.vt-step-1 .vt-podium-medal { color: var(--accent-light); }
-.vt-step-1 .vt-podium-medal .vt-i { color: var(--accent); }
 
 .vt-podium-name {
     font-family: var(--font-heading);
@@ -715,9 +732,7 @@ body[data-phase="encerrada"] .vt-live-status strong { color: var(--primary); }
     overflow-wrap: anywhere;
 }
 
-.vt-step-1 .vt-podium-name { color: var(--white); font-size: 1.2rem; }
-.vt-step-1 .vt-cat-tag { background: rgba(255, 255, 255, 0.14); color: var(--white); }
-.vt-step-1 .vt-cat-tag .vt-i { color: var(--accent-light); }
+.vt-step-1 .vt-podium-name { font-size: 1.2rem; }
 
 .vt-podium-people {
     display: flex;
@@ -735,9 +750,6 @@ body[data-phase="encerrada"] .vt-live-status strong { color: var(--primary); }
 .vt-podium-people .vt-i { width: 14px; height: 14px; margin-top: 2px; color: var(--primary-light); }
 .vt-podium-people li:last-child { color: var(--text-muted); }
 
-.vt-step-1 .vt-podium-people { border-top-color: rgba(255, 255, 255, 0.14); color: var(--white); }
-.vt-step-1 .vt-podium-people li:last-child { color: rgba(255, 255, 255, 0.78); }
-.vt-step-1 .vt-podium-people .vt-i { color: var(--accent-light); }
 
 .vt-podium-votes {
     font-family: var(--font-heading);
@@ -753,8 +765,7 @@ body[data-phase="encerrada"] .vt-live-status strong { color: var(--primary); }
     margin-right: 4px;
 }
 
-.vt-step-1 .vt-podium-votes { color: rgba(255, 255, 255, 0.75); }
-.vt-step-1 .vt-podium-votes b { color: var(--white); font-size: 1.9rem; }
+.vt-step-1 .vt-podium-votes b { font-size: 1.9rem; }
 
 .vt-podium-empty {
     border: 1px dashed rgba(34, 61, 115, 0.2);
@@ -785,8 +796,6 @@ body[data-phase="encerrada"] .vt-live-status strong { color: var(--primary); }
 .vt-mini-badge .vt-i { width: 12px; height: 12px; }
 
 .vt-mini-badge--mine { background: rgba(128, 191, 65, 0.18); color: var(--accent-text-light); }
-.vt-step-1 .vt-mini-badge { background: rgba(255, 255, 255, 0.16); color: var(--white); }
-.vt-step-1 .vt-mini-badge--mine { background: var(--accent); color: #0a0e1a; }
 
 /* Lista 4º–10º */
 .vt-rank-list { display: flex; flex-direction: column; gap: var(--space-sm); }
@@ -894,6 +903,11 @@ body[data-phase="encerrada"] .vt-live-status strong { color: var(--primary); }
     .vt-rank-controls .vt-tabs { flex-wrap: wrap; overflow: visible; padding-bottom: var(--space-md); }
 }
 
+/* Filtro por área só de 768px para cima; no celular, a busca cobre o filtro */
+@media (max-width: 767px) {
+    .vt-rank-controls .vt-tabs { display: none; }
+}
+
 .vt-rank-head {
     display: grid;
     grid-template-columns: 48px 44px minmax(0, 1.7fr) minmax(70px, 0.8fr) 84px 148px;
@@ -928,7 +942,6 @@ body[data-phase="encerrada"] .vt-live-status strong { color: var(--primary); }
 .vt-name-btn:hover { color: var(--primary); text-decoration-color: currentColor; }
 
 .vt-podium-name .vt-name-btn { font-size: inherit; color: inherit; }
-.vt-step-1 .vt-podium-name .vt-name-btn:hover { color: var(--accent-light); }
 
 
 .vt-rank-action { display: flex; justify-content: flex-end; }
@@ -939,8 +952,6 @@ body[data-phase="encerrada"] .vt-live-status strong { color: var(--primary); }
 
 .vt-podium-actions { margin-top: 4px; }
 .vt-podium-actions .btn-primary { width: 100%; }
-.vt-step-1 .vt-podium-actions .btn-primary:disabled { background: rgba(255, 255, 255, 0.12); color: rgba(255, 255, 255, 0.75) !important; }
-.vt-step-1 .vt-podium-actions .btn-primary.is-mine:disabled { background: var(--accent); color: #0a0e1a !important; }
 
 /* Aviso de fase (antes / encerrada) */
 .vt-notice {
@@ -1005,7 +1016,6 @@ body[data-phase="encerrada"] .vt-live-status strong { color: var(--primary); }
         gap: var(--space-md);
     }
 
-    .vt-step-base { display: none; }
     .vt-step { flex-direction: column; }
 
     .vt-rank-row {
@@ -1200,7 +1210,29 @@ body[data-phase="encerrada"] .vt-live-status strong { color: var(--primary); }
     .vt-footer .footer-grid { grid-template-columns: 1.3fr 0.8fr 1.3fr; gap: var(--space-xl); }
 }
 
-@media (max-width: 768px) {
+/* Tablet: marca centralizada no topo; Votação e LabSIS lado a lado */
+@media (max-width: 880px) {
+    .vt-footer .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-2xl) var(--space-xl);
+        text-align: center;
+    }
+    .vt-footer .footer-brand {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .vt-footer .footer-brand p { margin-inline: auto; }
+    .vt-footer .footer-social,
+    .vt-footer .nav-logo { justify-content: center; }
+    .vt-footer .footer-links { align-items: center; }
+    .vt-labsis { max-width: 340px; margin-inline: auto; }
+    .vt-footer .footer-bottom { justify-content: center; text-align: center; }
+}
+
+/* Celular: uma coluna, tudo centralizado */
+@media (max-width: 600px) {
     .vt-footer .footer-grid { grid-template-columns: 1fr; }
     .vt-labsis img { height: 40px; }
 }
