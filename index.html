@@ -3,223 +3,655 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VIVA Ciência — Seleção de Versão</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Votação Popular — VIVA Ciência 2026</title>
+  <meta name="description"
+    content="Vote no projeto estudantil que mais te inspirou na VIVA Ciência 2026 e acompanhe o ranking ao vivo. Um voto por pessoa, com login Google.">
+  <meta name="theme-color" content="#0a0e1a">
 
-  <!-- Google Fonts: Exo & Inter -->
+  <!-- Fonts (as mesmas do design system) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Exo:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Exo:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
 
-  <style>
-    :root {
-      --hero-dark: #0A0E1A;
-      --color-primary: #223D73;
-      --color-primary-mid: #384C73;
-      --color-accent: #80BF41;
-      --color-accent-light: #B7D996;
-      --color-background: #F2F2F2;
-      --color-card-bg: #FFFFFF;
-      --color-foreground: #0A0E1A;
-      --color-muted: #6B7280;
-      --color-border: #E5E7EB;
-      --font-heading: 'Exo', sans-serif;
-      --font-body: 'Inter', sans-serif;
-    }
+  <!-- Design system + extensões da votação -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="votacao-ui-pro-max.css">
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: var(--font-body);
-      background-color: var(--hero-dark);
-      color: #FFFFFF;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 2rem 1.5rem;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    /* Soft Glow Background */
-    body::before {
-      content: '';
-      position: absolute;
-      top: 20%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(128, 191, 65, 0.12) 0%, rgba(34, 61, 115, 0.2) 45%, rgba(10, 14, 26, 0) 70%);
-      pointer-events: none;
-      filter: blur(60px);
-    }
-
-    .wrapper {
-      width: 100%;
-      max-width: 860px;
-      position: relative;
-      z-index: 2;
-      text-align: center;
-    }
-
-    .header-brand {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 2.5rem;
-    }
-
-    .header-brand img {
-      width: 64px;
-      height: 64px;
-      object-fit: contain;
-    }
-
-    .brand-title {
-      font-family: var(--font-heading);
-      font-size: 2.25rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-
-    .brand-subtitle {
-      font-size: 0.95rem;
-      color: rgba(255, 255, 255, 0.65);
-      font-weight: 400;
-    }
-
-    .grid-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.75rem;
-      margin-top: 1rem;
-    }
-
-    .card-choice {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 2.5rem 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      color: #FFFFFF;
-      transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-    }
-
-    .card-choice:hover {
-      transform: translateY(-6px);
-      background: rgba(255, 255, 255, 0.08);
-      border-color: var(--color-accent);
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), 0 0 20px rgba(128, 191, 65, 0.2);
-    }
-
-    .version-number {
-      font-family: var(--font-heading);
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--color-accent-light);
-      margin-bottom: 0.5rem;
-    }
-
-    .version-name {
-      font-family: var(--font-heading);
-      font-size: 1.85rem;
-      font-weight: 800;
-      margin-bottom: 1.5rem;
-    }
-
-    .btn-choose {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.85rem 1.75rem;
-      border-radius: 10px;
-      font-family: var(--font-heading);
-      font-weight: 700;
-      font-size: 0.95rem;
-      transition: all 250ms ease;
-    }
-
-    .card-choice:nth-child(1) .btn-choose {
-      background: rgba(255, 255, 255, 0.12);
-      color: #FFFFFF;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-    }
-
-    .card-choice:nth-child(1):hover .btn-choose {
-      background: #FFFFFF;
-      color: var(--hero-dark);
-    }
-
-    .card-choice:nth-child(2) {
-      border-color: rgba(128, 191, 65, 0.4);
-    }
-
-    .card-choice:nth-child(2) .btn-choose {
-      background: var(--color-accent);
-      color: var(--hero-dark);
-      box-shadow: 0 4px 14px rgba(128, 191, 65, 0.35);
-    }
-
-    .card-choice:nth-child(2):hover .btn-choose {
-      background: var(--color-accent-light);
-      transform: translateX(3px);
-    }
-  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Flip.min.js" defer></script>
+  <script src="votacao-ui-pro-max.js" defer></script>
 </head>
 
-<body>
+<body class="vt-page" data-phase="aberta">
 
-  <div class="wrapper">
-    <div class="header-brand">
-      <img src="Logo Camisa e Copo2.png" alt="Logo VIVA Ciência">
-      <h1 class="brand-title">VIVA CIÊNCIA</h1>
-      <p class="brand-subtitle">Selecione a versão para visualização</p>
+  <!-- ═══ Sprite de ícones (traço 2px, viewBox 24, herda currentColor) ═══ -->
+  <svg class="vt-sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-thumbs-up" viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" /><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" /></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></symbol>
+    <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></symbol>
+    <symbol id="i-map-pin" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></symbol>
+    <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="8" r="7" /><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" /></symbol>
+    <symbol id="i-sprout" viewBox="0 0 24 24"><path d="M12 22V8" /><path d="M5 12H2a10 10 0 0 0 20 0h-3" /><path d="M8 5.2C9.2 3.6 10.5 2 12 2s2.8 1.6 4 3.2c.7 1 1.3 2 1.7 3 .2.4.3.8.3 1.2 0 2-2.7 3.6-6 3.6s-6-1.6-6-3.6c0-.4.1-.8.3-1.2.4-1 1-2 1.7-3z" /></symbol>
+    <symbol id="i-flask" viewBox="0 0 24 24"><path d="M10 2v7.31L4.2 19.13A2 2 0 0 0 6 22h12a2 2 0 0 0 1.8-2.87L14 9.31V2" /><line x1="8.5" y1="2" x2="15.5" y2="2" /><line x1="7" y1="16" x2="17" y2="16" /></symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" /><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" /></symbol>
+    <symbol id="i-x-circle" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /><circle cx="12" cy="12" r="9" /></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="2" /><path d="M12 7v4" /><line x1="8" y1="16" x2="8" y2="16" /><line x1="16" y1="16" x2="16" y2="16" /></symbol>
+    <symbol id="i-pen-tool" viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z" /><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" /><path d="M2 2l7.586 7.586" /><circle cx="11" cy="11" r="2" /></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12" /></symbol>
+    <symbol id="i-check-circle" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" /></symbol>
+    <symbol id="i-log-in" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" /><polyline points="10 17 15 12 10 7" /><line x1="15" y1="12" x2="3" y2="12" /></symbol>
+    <symbol id="i-log-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5" /><polyline points="5 12 12 5 19 12" /></symbol>
+    <symbol id="i-arrow-down" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" /><polyline points="19 12 12 19 5 12" /></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12" /></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" /><line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" /><line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" /><line x1="1" y1="14" x2="7" y2="14" /><line x1="9" y1="8" x2="15" y2="8" /><line x1="17" y1="16" x2="23" y2="16" /></symbol>
+    <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" /></symbol>
+    <symbol id="i-youtube" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.13C5.12 19.56 12 19.56 12 19.56s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.43z" /><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" /></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></symbol>
+  </svg>
+
+  <a class="vt-skip" href="#conteudo">Pular para o conteúdo</a>
+
+  <!-- ═══ Navbar ═══ -->
+  <nav class="navbar vt-nav" id="navbar" aria-label="Principal">
+    <div class="container">
+      <div class="nav-links" id="navLinks">
+        <a href="#ranking">Ranking</a>
+        <a href="#como-votar">Como votar</a>
+        <div class="vt-auth" id="authSlot">
+          <button type="button" class="nav-cta" id="navLogin">
+            <svg class="vt-i" aria-hidden="true"><use href="#i-log-in" /></svg>
+            Entrar com Google
+          </button>
+          <div class="vt-user" id="navUser" hidden>
+            <span class="vt-avatar" id="navAvatar" aria-hidden="true">V</span>
+            <span class="vt-user-name" id="navUserName">Visitante</span>
+            <button type="button" class="vt-icon-btn" id="navLogout" aria-label="Sair da conta">
+              <svg class="vt-i" aria-hidden="true"><use href="#i-log-out" /></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="nav-toggle vt-nav-toggle" id="navToggle" aria-label="Abrir menu"
+        aria-expanded="false" aria-controls="navLinks">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══ Hero ═══ -->
+  <header class="hero vt-hero vt-dark" id="topo">
+    <div class="hero-math-texture" aria-hidden="true"></div>
+    <div class="aurora-glow aurora-glow-1" aria-hidden="true"></div>
+    <div class="aurora-glow aurora-glow-2" aria-hidden="true"></div>
+
+    <div class="container vt-hero-grid">
+      <div class="vt-hero-logo vt-hero-anim">
+        <img src="Logo Camisa e Copo2.png" alt="VIVA Ciência — Feira Científica e Tecnológica do Tocantins" width="500" height="500" fetchpriority="high">
+      </div>
+
+      <div class="vt-hero-copy">
+        <h1 class="hero-title vt-hero-anim">
+          Votação do projeto <span class="highlight">da galera</span>
+        </h1>
+
+        <ul class="hero-badges vt-hero-badges vt-hero-anim" aria-label="Resumo da votação">
+          <li class="hero-badge"><svg class="vt-i" aria-hidden="true"><use href="#i-book-open" /></svg> <span><span id="statProjects">123</span> projetos</span></li>
+          <li class="hero-badge"><svg class="vt-i" aria-hidden="true"><use href="#i-grid" /></svg> 7 áreas</li>
+          <li class="hero-badge"><svg class="vt-i" aria-hidden="true"><use href="#i-shield" /></svg> 1 voto por pessoa</li>
+        </ul>
+
+        <ol class="vt-steps vt-hero-anim" aria-label="Como votar em 3 passos">
+          <li><span class="vt-step-n">1</span> Entre com Google</li>
+          <li aria-hidden="true" class="vt-step-sep"><svg class="vt-i"><use href="#i-arrow-right" /></svg></li>
+          <li><span class="vt-step-n">2</span> Escolha</li>
+          <li aria-hidden="true" class="vt-step-sep"><svg class="vt-i"><use href="#i-arrow-right" /></svg></li>
+          <li><span class="vt-step-n">3</span> Confirme</li>
+        </ol>
+
+        <div class="vt-hero-actions vt-hero-anim">
+          <a href="#ranking" class="btn-vote-main">
+            <svg class="vt-i" aria-hidden="true"><use href="#i-thumbs-up" /></svg>
+            Votar agora
+          </a>
+          <a href="#como-votar" class="btn btn-outline">
+            <svg class="vt-i" aria-hidden="true"><use href="#i-info" /></svg>
+            Como funciona
+          </a>
+        </div>
+      </div>
+
+      <aside class="hero-countdown-card vt-countdown vt-hero-anim" aria-labelledby="cdLabel">
+        <div class="countdown-header">
+          <span class="countdown-badge">
+            <svg class="vt-i" aria-hidden="true"><use href="#i-clock" /></svg>
+            <span id="cdLabel">A votação encerra em</span>
+          </span>
+        </div>
+
+        <div class="countdown-grid" id="cdGrid" role="timer" aria-live="off">
+          <div class="countdown-item">
+            <div class="countdown-number" id="cdDays">00</div>
+            <div class="countdown-label">Dias</div>
+          </div>
+          <div class="countdown-sep" aria-hidden="true">:</div>
+          <div class="countdown-item">
+            <div class="countdown-number" id="cdHours">00</div>
+            <div class="countdown-label">Horas</div>
+          </div>
+          <div class="countdown-sep" aria-hidden="true">:</div>
+          <div class="countdown-item">
+            <div class="countdown-number" id="cdMinutes">00</div>
+            <div class="countdown-label">Min</div>
+          </div>
+          <div class="countdown-sep" aria-hidden="true">:</div>
+          <div class="countdown-item">
+            <div class="countdown-number" id="cdSeconds">00</div>
+            <div class="countdown-label">Seg</div>
+          </div>
+        </div>
+        <p class="vt-cd-closed" id="cdClosed" hidden>Resultado oficial na cerimônia de premiação.</p>
+
+        <div class="countdown-footer">
+          <a class="vt-live-pill" href="#ranking" id="heroLive">
+            <span class="vt-live-dot" aria-hidden="true"></span>
+            <span id="heroLiveLabel">Ao vivo</span>
+            <strong id="heroTotal">0 votos</strong>
+          </a>
+          <span>
+            <svg class="vt-i" aria-hidden="true"><use href="#i-calendar" /></svg>
+            24/11, 20h → 26/11, 12h
+          </span>
+        </div>
+      </aside>
     </div>
 
-    <div class="grid-cards">
-      <!-- Opção Versão 1 -->
-      <a href="./v1/index.html" class="card-choice">
-        <span class="version-number">Opção 01</span>
-        <h2 class="version-name">Versão 1</h2>
-        <span class="btn-choose">
-          Acessar V1
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12h14" />
-            <path d="m12 5 7 7-7 7" />
-          </svg>
-        </span>
-      </a>
+    <div class="hero-transition-divider" aria-hidden="true">
+      <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0 120C360 40 1080 40 1440 120V120H0Z" fill="#F2F2F2" />
+      </svg>
+    </div>
+  </header>
 
-      <!-- Opção Versão 2 -->
-      <a href="./v2/index.html" class="card-choice">
-        <span class="version-number">Opção 02</span>
-        <h2 class="version-name">Versão 2</h2>
-        <span class="btn-choose">
-          Acessar V2
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12h14" />
-            <path d="m12 5 7 7-7 7" />
-          </svg>
+  <main id="conteudo">
+
+    <!-- ═══ Ranking ao vivo + votação ═══ -->
+    <section class="section vt-ranking" id="ranking" aria-labelledby="rankingTitle">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-badge">
+            <span class="vt-live-dot vt-live-dot--light" aria-hidden="true"></span>
+            <span id="rankBadgeLabel">Ao vivo</span>
+          </span>
+          <h2 class="section-title" id="rankingTitle">Ranking ao vivo</h2>
+        </div>
+
+        <div class="vt-rank-panel reveal">
+          <div class="vt-rank-controls" id="rankControls">
+            <div class="vt-rank-toolbar">
+              <p class="vt-live-status" id="liveStatus">
+                <span class="vt-live-dot" aria-hidden="true"></span>
+                <strong id="liveLabel">Ao vivo</strong>
+                <span class="vt-live-sep" aria-hidden="true">·</span>
+                <span><b id="liveTotal">0</b> votos</span>
+                <span class="vt-live-sep" aria-hidden="true">·</span>
+                <span id="liveUpdated">atualizado agora</span>
+              </p>
+              <div class="vt-search vt-rank-search">
+                <label for="searchInput" class="vt-sr">Buscar projetos</label>
+                <svg class="vt-i vt-search-icon" aria-hidden="true"><use href="#i-search" /></svg>
+                <input type="search" id="searchInput" placeholder="Buscar projeto, aluno, escola ou cidade" autocomplete="off"
+                  enterkeyhint="search">
+                <button type="button" class="vt-search-clear" id="searchClear" aria-label="Limpar busca" hidden>
+                  <svg class="vt-i" aria-hidden="true"><use href="#i-x" /></svg>
+                </button>
+              </div>
+            </div>
+            <div class="vt-tabs" role="tablist" aria-label="Filtrar ranking por área" id="rankTabs"></div>
+          </div>
+
+          <div class="vt-rank-body" id="rankBody" role="tabpanel" aria-labelledby="tab-geral">
+            <div class="vt-notice" id="rankNotice" hidden></div>
+            <div class="vt-podium" id="podium"></div>
+            <p class="vt-results" id="results" aria-live="polite"></p>
+            <div class="vt-rank-head" aria-hidden="true">
+              <span>Pos.</span><span></span><span>Projeto</span><span></span><span>Votos</span><span></span>
+            </div>
+            <ol class="vt-rank-list" id="rankList"></ol>
+            <div class="vt-empty" id="rankEmpty" hidden>
+              <span class="vt-empty-icon"><svg class="vt-i" aria-hidden="true"><use href="#i-search" /></svg></span>
+              <h3 id="emptyTitle">Nenhum projeto encontrado</h3>
+              <p>Confira a grafia ou tente o nome de um aluno, da escola ou da cidade.</p>
+              <button type="button" class="vt-btn vt-btn-ghost" id="emptyReset">Limpar busca e filtros</button>
+            </div>
+            <p class="vt-rank-note" id="rankNote">
+              <svg class="vt-i" aria-hidden="true"><use href="#i-info" /></svg>
+              Não há posições compartilhadas: com o mesmo número de votos, fica à frente o projeto que vem antes na ordem alfabética.
+            </p>
+          </div>
+        </div>
+
+        <p class="vt-sr" aria-live="polite" id="rankAnnouncer"></p>
+      </div>
+    </section>
+
+    <!-- ═══ Como funciona ═══ -->
+    <section class="section vt-how" id="como-votar" aria-labelledby="comoTitle">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-badge">
+            <svg class="vt-i" aria-hidden="true"><use href="#i-info" /></svg>
+            Como votar
+          </span>
+          <h2 class="section-title" id="comoTitle">Três passos, um voto</h2>
+          <p class="section-subtitle">
+            Cada pessoa vota uma única vez. O login com Google garante que cada voto seja de uma pessoa diferente.
+          </p>
+        </div>
+
+        <ol class="about-grid vt-how-steps">
+          <li class="about-card reveal reveal-delay-1">
+            <div class="about-icon"><svg class="vt-i" aria-hidden="true"><use href="#i-log-in" /></svg></div>
+            <h3>1. Entre com Google</h3>
+            <p>Um toque, sem cadastro nem senha nova. Você pode entrar antes mesmo de a votação abrir.</p>
+          </li>
+          <li class="about-card reveal reveal-delay-2">
+            <div class="about-icon"><svg class="vt-i" aria-hidden="true"><use href="#i-search" /></svg></div>
+            <h3>2. Escolha um projeto</h3>
+            <p>Busque na lista do ranking, filtre pelas 7 áreas ou escaneie o QR code do estande.</p>
+          </li>
+          <li class="about-card reveal reveal-delay-3">
+            <div class="about-icon"><svg class="vt-i" aria-hidden="true"><use href="#i-check-circle" /></svg></div>
+            <h3>3. Confirme seu voto</h3>
+            <p>Revise a escolha e confirme. Depois de confirmado, o voto não pode ser alterado.</p>
+          </li>
+        </ol>
+
+      </div>
+    </section>
+
+    <!-- ═══ Patrocinadores (carrossel infinito, igual ao index.html) ═══ -->
+    <section class="section sponsors-section" id="patrocinadores">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-badge">
+          <svg class="vt-i" aria-hidden="true"><use href="#i-heart" /></svg>
+          Apoiadores & Parceiros
         </span>
-      </a>
+        <h2 class="section-title">Patrocinadores Institucionais</h2>
+        <p class="section-subtitle">
+          Instituições e empresas que impulsionam o futuro da pesquisa científica no Tocantins.
+        </p>
+      </div>
+    </div>
+
+    <!-- Faixa 1: Realização e Órgãos Públicos de Pesquisa -->
+    <div class="sponsor-carousel-row">
+      <div class="sponsor-track">
+        <!-- Set 1 -->
+        <div class="sponsor-card" title="IFTO — Instituto Federal do Tocantins">
+          <img src="partners/ifto.png" alt="IFTO — Instituto Federal do Tocantins" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="Governo do Tocantins">
+          <img src="partners/tocantins.png" alt="Governo do Tocantins" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="CNPq — Conselho Nacional de Desenvolvimento Científico e Tecnológico">
+          <img src="partners/cnpq.png" alt="CNPq" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="FAPT — Fundação de Amparo à Pesquisa do Tocantins">
+          <img src="partners/fapt.png" alt="FAPT" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="MEC — Ministério da Educação">
+          <img src="partners/mec.png" alt="MEC" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="MCTI — Ministério da Ciência, Tecnologia e Inovações">
+          <img src="partners/mcti.png" alt="MCTI" loading="lazy">
+        </div>
+
+        <!-- Set 2 -->
+        <div class="sponsor-card" title="IFTO — Instituto Federal do Tocantins">
+          <img src="partners/ifto.png" alt="IFTO — Instituto Federal do Tocantins" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="Governo do Tocantins">
+          <img src="partners/tocantins.png" alt="Governo do Tocantins" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="CNPq — Conselho Nacional de Desenvolvimento Científico e Tecnológico">
+          <img src="partners/cnpq.png" alt="CNPq" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="FAPT — Fundação de Amparo à Pesquisa do Tocantins">
+          <img src="partners/fapt.png" alt="FAPT" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="MEC — Ministério da Educação">
+          <img src="partners/mec.png" alt="MEC" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="MCTI — Ministério da Ciência, Tecnologia e Inovações">
+          <img src="partners/mcti.png" alt="MCTI" loading="lazy">
+        </div>
+
+        <!-- Set 3 -->
+        <div class="sponsor-card" title="IFTO — Instituto Federal do Tocantins">
+          <img src="partners/ifto.png" alt="IFTO — Instituto Federal do Tocantins" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="Governo do Tocantins">
+          <img src="partners/tocantins.png" alt="Governo do Tocantins" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="CNPq — Conselho Nacional de Desenvolvimento Científico e Tecnológico">
+          <img src="partners/cnpq.png" alt="CNPq" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="FAPT — Fundação de Amparo à Pesquisa do Tocantins">
+          <img src="partners/fapt.png" alt="FAPT" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="MEC — Ministério da Educação">
+          <img src="partners/mec.png" alt="MEC" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="MCTI — Ministério da Ciência, Tecnologia e Inovações">
+          <img src="partners/mcti.png" alt="MCTI" loading="lazy">
+        </div>
+
+        <!-- Set 4 -->
+        <div class="sponsor-card" title="IFTO — Instituto Federal do Tocantins">
+          <img src="partners/ifto.png" alt="IFTO — Instituto Federal do Tocantins" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="Governo do Tocantins">
+          <img src="partners/tocantins.png" alt="Governo do Tocantins" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="CNPq — Conselho Nacional de Desenvolvimento Científico e Tecnológico">
+          <img src="partners/cnpq.png" alt="CNPq" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="FAPT — Fundação de Amparo à Pesquisa do Tocantins">
+          <img src="partners/fapt.png" alt="FAPT" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="MEC — Ministério da Educação">
+          <img src="partners/mec.png" alt="MEC" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="MCTI — Ministério da Ciência, Tecnologia e Inovações">
+          <img src="partners/mcti.png" alt="MCTI" loading="lazy">
+        </div>
+      </div>
+    </div>
+
+    <!-- Faixa 2: Sentido Inverso -->
+    <div class="sponsor-carousel-row">
+      <div class="sponsor-track reverse">
+        <!-- Set 1 -->
+        <div class="sponsor-card" title="MCTI — Ministério da Ciência, Tecnologia e Inovações">
+          <img src="partners/mcti.png" alt="MCTI" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="MEC — Ministério da Educação">
+          <img src="partners/mec.png" alt="MEC" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="FAPT — Fundação de Amparo à Pesquisa do Tocantins">
+          <img src="partners/fapt.png" alt="FAPT" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="CNPq — Conselho Nacional de Desenvolvimento Científico e Tecnológico">
+          <img src="partners/cnpq.png" alt="CNPq" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="Governo do Tocantins">
+          <img src="partners/tocantins.png" alt="Governo do Tocantins" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="IFTO — Instituto Federal do Tocantins">
+          <img src="partners/ifto.png" alt="IFTO — Instituto Federal do Tocantins" loading="lazy">
+        </div>
+
+        <!-- Set 2 -->
+        <div class="sponsor-card" title="MCTI — Ministério da Ciência, Tecnologia e Inovações">
+          <img src="partners/mcti.png" alt="MCTI" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="MEC — Ministério da Educação">
+          <img src="partners/mec.png" alt="MEC" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="FAPT — Fundação de Amparo à Pesquisa do Tocantins">
+          <img src="partners/fapt.png" alt="FAPT" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="CNPq — Conselho Nacional de Desenvolvimento Científico e Tecnológico">
+          <img src="partners/cnpq.png" alt="CNPq" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="Governo do Tocantins">
+          <img src="partners/tocantins.png" alt="Governo do Tocantins" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="IFTO — Instituto Federal do Tocantins">
+          <img src="partners/ifto.png" alt="IFTO — Instituto Federal do Tocantins" loading="lazy">
+        </div>
+
+        <!-- Set 3 -->
+        <div class="sponsor-card" title="MCTI — Ministério da Ciência, Tecnologia e Inovações">
+          <img src="partners/mcti.png" alt="MCTI" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="MEC — Ministério da Educação">
+          <img src="partners/mec.png" alt="MEC" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="FAPT — Fundação de Amparo à Pesquisa do Tocantins">
+          <img src="partners/fapt.png" alt="FAPT" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="CNPq — Conselho Nacional de Desenvolvimento Científico e Tecnológico">
+          <img src="partners/cnpq.png" alt="CNPq" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="Governo do Tocantins">
+          <img src="partners/tocantins.png" alt="Governo do Tocantins" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="IFTO — Instituto Federal do Tocantins">
+          <img src="partners/ifto.png" alt="IFTO — Instituto Federal do Tocantins" loading="lazy">
+        </div>
+
+        <!-- Set 4 -->
+        <div class="sponsor-card" title="MCTI — Ministério da Ciência, Tecnologia e Inovações">
+          <img src="partners/mcti.png" alt="MCTI" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="MEC — Ministério da Educação">
+          <img src="partners/mec.png" alt="MEC" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="FAPT — Fundação de Amparo à Pesquisa do Tocantins">
+          <img src="partners/fapt.png" alt="FAPT" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="CNPq — Conselho Nacional de Desenvolvimento Científico e Tecnológico">
+          <img src="partners/cnpq.png" alt="CNPq" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="Governo do Tocantins">
+          <img src="partners/tocantins.png" alt="Governo do Tocantins" loading="lazy">
+        </div>
+        <div class="sponsor-card" title="IFTO — Instituto Federal do Tocantins">
+          <img src="partners/ifto.png" alt="IFTO — Instituto Federal do Tocantins" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+  </main>
+
+  <!-- ═══ Footer ═══ -->
+  <footer class="footer vt-dark vt-footer" id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#topo" class="nav-logo">
+            <img src="Logo Camisa e Copo2.png" alt="" width="40" height="40">
+            <div class="nav-logo-text">
+              VIVA Ciência
+              <span>Feira Científica do Tocantins</span>
+            </div>
+          </a>
+          <p>A votação popular celebra a curiosidade de estudantes de todo o Tocantins. Obrigado por apoiar a ciência feita aqui.</p>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram"><svg class="vt-i" aria-hidden="true"><use href="#i-instagram" /></svg></a>
+            <a href="#" aria-label="YouTube"><svg class="vt-i" aria-hidden="true"><use href="#i-youtube" /></svg></a>
+            <a href="#" aria-label="E-mail"><svg class="vt-i" aria-hidden="true"><use href="#i-mail" /></svg></a>
+          </div>
+        </div>
+        <div>
+          <h4>Votação</h4>
+          <div class="footer-links">
+            <a href="#ranking">Ranking e votação</a>
+            <a href="#como-votar">Como votar</a>
+          </div>
+        </div>
+        <div class="vt-footer-dev">
+          <h4>Desenvolvido por</h4>
+          <a class="vt-labsis" href="https://labsis.dev.br/" target="_blank" rel="noopener noreferrer">
+            <img src="labsis_logo_bg.png" alt="LabSIS — Laboratório de Sistemas Inovadores" width="517" height="153" loading="lazy">
+            <span>Laboratório de Sistemas Inovadores</span>
+            <svg class="vt-i vt-labsis-arrow" aria-hidden="true"><use href="#i-arrow-right" /></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 VIVA Ciência — Feira Científica e Tecnológica do Tocantins.</p>
+        <p>Desenvolvido pelos voluntários do <a href="#">IFTO</a>.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══ Barra inferior (mobile) ═══ -->
+  <div class="vt-bottombar" id="bottomBar">
+    <p class="vt-bottombar-text" id="bottomText">Escolha seu projeto</p>
+    <a href="#ranking" class="btn-primary vt-btn-sm" id="bottomAction">Votar</a>
+  </div>
+
+  <!-- ═══ Toasts ═══ -->
+  <div class="vt-toasts" id="toasts" role="status" aria-live="polite"></div>
+
+  <!-- ═══ Modal: detalhes do projeto ═══ -->
+  <div class="vt-modal" id="modalDetail" hidden>
+    <div class="vt-modal-scrim" data-close></div>
+    <div class="vt-modal-dialog vt-modal-dialog--wide" role="dialog" aria-modal="true" aria-labelledby="detailTitle" tabindex="-1">
+      <button type="button" class="vt-modal-close" data-close aria-label="Fechar">
+        <svg class="vt-i" aria-hidden="true"><use href="#i-x" /></svg>
+      </button>
+      <div id="detailContent"></div>
     </div>
   </div>
+
+  <!-- ═══ Modal: login ═══ -->
+  <div class="vt-modal" id="modalLogin" hidden>
+    <div class="vt-modal-scrim" data-close></div>
+    <div class="vt-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="loginTitle" aria-describedby="loginDesc" tabindex="-1">
+      <button type="button" class="vt-modal-close" data-close aria-label="Fechar">
+        <svg class="vt-i" aria-hidden="true"><use href="#i-x" /></svg>
+      </button>
+      <div class="vt-modal-icon"><svg class="vt-i" aria-hidden="true"><use href="#i-shield" /></svg></div>
+      <h2 class="vt-modal-title" id="loginTitle">Entre para votar</h2>
+      <p class="vt-modal-text" id="loginDesc">Usamos sua conta Google só para garantir <strong>um voto por pessoa</strong>.
+        <span id="loginPending"></span></p>
+      <button type="button" class="vt-google-btn" id="googleBtn" data-autofocus>
+        <svg class="vt-google-g" viewBox="0 0 48 48" aria-hidden="true">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+        </svg>
+        <span id="googleBtnLabel">Entrar com Google</span>
+      </button>
+      <p class="vt-modal-fine">
+        Ao entrar, você concorda com o uso do seu nome, e-mail e ID da conta apenas para esta votação.
+        Os dados são apagados após a premiação.
+      </p>
+      <p class="vt-proto-note">
+        <svg class="vt-i" aria-hidden="true"><use href="#i-info" /></svg>
+        Protótipo: o login é simulado. Nenhum dado é enviado.
+      </p>
+    </div>
+  </div>
+
+  <!-- ═══ Modal: confirmação ═══ -->
+  <div class="vt-modal" id="modalConfirm" hidden>
+    <div class="vt-modal-scrim" data-close></div>
+    <div class="vt-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmDesc" tabindex="-1">
+      <button type="button" class="vt-modal-close" data-close aria-label="Fechar">
+        <svg class="vt-i" aria-hidden="true"><use href="#i-x" /></svg>
+      </button>
+      <div class="vt-modal-icon vt-modal-icon--accent"><svg class="vt-i" aria-hidden="true"><use href="#i-thumbs-up" /></svg></div>
+      <h2 class="vt-modal-title" id="confirmTitle">Confirmar seu voto?</h2>
+      <div id="confirmDesc">
+        <div class="vt-confirm-project" id="confirmProject"></div>
+        <p class="vt-warning">
+          <svg class="vt-i" aria-hidden="true"><use href="#i-alert" /></svg>
+          Cada pessoa vota uma única vez. Depois de confirmado, o voto <strong>não pode ser alterado</strong>.
+        </p>
+      </div>
+      <div class="vt-turnstile" id="turnstile" data-state="checking">
+        <span class="vt-spinner" aria-hidden="true"></span>
+        <svg class="vt-i vt-turnstile-ok" aria-hidden="true"><use href="#i-check-circle" /></svg>
+        <span id="turnstileText">Verificando se você não é um robô…</span>
+        <small>Cloudflare Turnstile · simulado</small>
+      </div>
+      <div class="vt-modal-actions">
+        <button type="button" class="vt-btn vt-btn-ghost" data-close>Voltar</button>
+        <button type="button" class="btn-primary vt-btn-confirm" id="confirmBtn" disabled>
+          <span class="vt-spinner" aria-hidden="true"></span>
+          <svg class="vt-i" aria-hidden="true"><use href="#i-check" /></svg>
+          <span class="vt-btn-label">Confirmar voto</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Modal: sucesso ═══ -->
+  <div class="vt-modal" id="modalSuccess" hidden>
+    <div class="vt-modal-scrim" data-close></div>
+    <div class="vt-modal-dialog vt-success" role="dialog" aria-modal="true" aria-labelledby="successTitle" aria-describedby="successDesc" tabindex="-1">
+      <button type="button" class="vt-modal-close" data-close aria-label="Fechar">
+        <svg class="vt-i" aria-hidden="true"><use href="#i-x" /></svg>
+      </button>
+      <img class="vt-success-mascot" id="successMascot" data-src="faisca-animation.webp?v=6" alt="" width="180" height="180">
+      <h2 class="vt-modal-title" id="successTitle">Voto registrado!</h2>
+      <p class="vt-modal-text" id="successDesc"></p>
+      <div class="vt-modal-actions vt-modal-actions--stack">
+        <button type="button" class="btn-primary" id="successRanking" data-autofocus>
+          <svg class="vt-i" aria-hidden="true"><use href="#i-award" /></svg>
+          Ver no ranking
+        </button>
+        <a class="vt-btn vt-btn-ghost" id="successShare" href="#" target="_blank" rel="noopener">
+          <svg class="vt-i" aria-hidden="true"><use href="#i-share" /></svg>
+          Compartilhar no WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Controles do protótipo ═══ -->
+  <aside class="vt-proto" id="proto" aria-label="Controles do protótipo">
+    <button type="button" class="vt-proto-toggle" id="protoToggle" aria-expanded="false" aria-controls="protoPanel">
+      <svg class="vt-i" aria-hidden="true"><use href="#i-sliders" /></svg>
+      <span>Protótipo</span>
+    </button>
+    <div class="vt-proto-panel" id="protoPanel" hidden>
+      <p class="vt-proto-title">Simulação</p>
+      <fieldset>
+        <legend>Fase da votação</legend>
+        <label><input type="radio" name="phase" value="auto"> Relógio real</label>
+        <label><input type="radio" name="phase" value="antes"> Antes (até 24/11, 20h)</label>
+        <label><input type="radio" name="phase" value="aberta"> Aberta</label>
+        <label><input type="radio" name="phase" value="encerrada"> Encerrada (após 26/11, 12h)</label>
+      </fieldset>
+      <label class="vt-proto-check"><input type="checkbox" id="protoLive"> Chegada de votos simulada</label>
+      <button type="button" class="vt-btn vt-btn-ghost vt-btn-sm" id="protoReset">
+        <svg class="vt-i" aria-hidden="true"><use href="#i-log-out" /></svg>
+        Zerar meu voto e login
+      </button>
+      <p class="vt-proto-fine">Dados fictícios. Login, votos e ranking rodam só neste navegador.</p>
+    </div>
+  </aside>
 
 </body>
 
