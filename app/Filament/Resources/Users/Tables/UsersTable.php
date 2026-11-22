@@ -1,0 +1,238 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Resources\Users\Tables;
+
+use App\Enums\OrganizationRole;
+use App\Events\UserApproved;
+use App\Filament\Resources\Users\Actions\DeleteUserAction;
+use App\Models\Organization;
+use App\Models\User;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Facades\Filament;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Table;
+
+class UsersTable
+{
+    public static function configure(Table $table): Table
+    {
+        $currentUser = Filament::auth()->user();
+        $isAdmin = false;
+
+        if ($currentUser instanceof User) {
+            $isAdmin = $currentUser->hasRole(OrganizationRole::Admin->value);
+        }
+
+        $query = User::query()->withoutRole(OrganizationRole::Admin->value);
+        $currentTeam = Filament::getTenant();
+
+        if (! $isAdmin) {
+            if ($currentTeam instanceof Organization) {
+                $query->whereHas('organizations', function ($q) use ($currentTeam): void {
+                    $q->where('organizations.id', $currentTeam->getKey());
+                })->withRolesForTeam($currentTeam);
+            }
+        } else {
+            $query->with(['organizations', 'rolesWithTeams']);
+        }
+
+        return $table
+            ->query($query)
+            ->columns([
+                self::getNameColumn(),
+                self::getEmailColumn(),
+                ...self::getTenantsColumn($isAdmin),
+                self::getRolesColumn($isAdmin),
+                self::getStatusColumn(),
+                self::getApprovalColumn(),
+            ])
+            ->filters([
+                //
+            ])
+            ->recordActions([
+                ActionGroup::make([
+                    ViewAction::make()
+                        ->tooltip('Visualizar')
+                        ->color('gray')
+                        ->icon(Heroicon::Eye)
+                        ->hiddenLabel(),
+                    EditAction::make()
+                        ->tooltip('Editar')
+                        ->color('success')
+                        ->icon(Heroicon::PencilSquare)
+                        ->hiddenLabel()
+                        ->visible(fn (User $record): bool => Filament::auth()->user()->can('update', $record) && $record->isApproved()),
+                    DeleteUserAction::make()
+                        ->tooltip('Excluir')
+                        ->hiddenLabel(),
+                ])
+                    ->buttonGroup(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    // DeleteBulkAction::make(),
+                ]),
+            ])
+            ->defaultSort('name', 'desc');
+    }
+
+    /**
+     * Coluna do nome do usuário
+     */
+    private static function getNameColumn(): Column
+    {
+        return TextColumn::make('name')
+            ->searchable(isIndividual: true, isGlobal: false)
+            ->sortable();
+    }
+
+    /**
+     * Coluna do email do usuário
+     */
+    private static function getEmailColumn(): Column
+    {
+        return TextColumn::make('email')
+            ->label('Email address');
+    }
+
+    /**
+     * Coluna de teams (apenas para Admin)
+     */
+    private static function getTenantsColumn(bool $isAdmin): array
+    {
+        if (! $isAdmin) {
+            return [];
+        }
+
+        return [
+            TextColumn::make('organizations.name')
+                ->label('Organizações')
+                ->listWithLineBreaks(fn (?User $record): bool => $record instanceof User && $record->isApproved())
+                ->bulleted(fn (?User $record): bool => $record instanceof User && $record->isApproved()),
+        ];
+    }
+
+    /**
+     * Coluna de funções/roles do usuário
+     */
+    private static function getRolesColumn(bool $isAdmin)
+    {
+        return TextColumn::make('tenant_roles')
+            ->label($isAdmin ? 'Funções' : 'Função')
+            ->state(fn (User $record): array|string => self::getTenantRolesForUser($record, $isAdmin))
+            ->listWithLineBreaks(fn (?User $record): bool => $record instanceof User && $record->isApproved())
+            ->when($isAdmin, fn ($column): TextColumn => $column->bulleted(fn (?User $record): bool => $record instanceof User && $record->isApproved()));
+    }
+
+    /**
+     * Coluna de status (suspenso/autorizado) - apenas para usuários aprovados
+     */
+    private static function getStatusColumn(): Column
+    {
+        return TextColumn::make('is_suspended')
+            ->label('Acesso')
+            ->sortable()
+            ->formatStateUsing(fn (User $record): string => $record->is_suspended ? __('Suspenso') : __('Liberado'))
+            ->badge()
+            ->color(fn (User $record): string => $record->is_suspended ? 'danger' : 'primary')
+            ->alignCenter();
+    }
+
+    /**
+     * Coluna de aprovação - apenas para usuários não aprovados e visível para Admin/Owner
+     */
+    private static function getApprovalColumn(): ToggleColumn
+    {
+        return ToggleColumn::make('is_approved')
+            ->onColor('primary')
+            ->offColor('danger')
+            ->onIcon(Heroicon::Check)
+            ->offIcon(Heroicon::XMark)
+            ->label('Aprovar')
+            ->disabled(fn (User $record): bool => ! (Filament::auth()->user()?->can('approve', $record) ?? false))
+            ->afterStateUpdated(function (User $record, $state): void {
+                // Se o usuário foi aprovado
+                if ($state) {
+                    // Remover suspensão
+                    $record->is_suspended = false;
+
+                    // Se o email não está verificado, verificar automaticamente
+                    if (! $record->hasVerifiedEmail()) {
+                        $record->markEmailAsVerified();
+                    }
+
+                    $record->save();
+
+                    // Disparar evento de aprovação
+                    event(new UserApproved($record));
+                }
+            });
+    }
+
+    private static function getTenantRolesForUser(User $record, bool $isAdmin): array|string
+    {
+        if ($record->hasRole(OrganizationRole::Admin->value)) {
+            return '—';
+        }
+
+        if ($isAdmin) {
+            return self::getAdminViewRoles($record);
+        }
+
+        return self::getTenantViewRoles($record);
+    }
+
+    private static function getAdminViewRoles(User $record): array|string
+    {
+        $teams = $record->organizations;
+
+        if ($teams->isEmpty()) {
+            return '—';
+        }
+
+        $lines = [];
+
+        foreach ($teams as $team) {
+            $roles = $record->rolesWithTeams
+                ->where('team_id', $team->id);
+
+            if ($roles->isEmpty()) {
+                $lines[] = '—';
+
+                continue;
+            }
+
+            $labels = $roles->map(fn ($role): string => self::getRoleLabel($role->name))->all();
+
+            $lines[] = implode(', ', $labels);
+        }
+
+        return $lines;
+    }
+
+    private static function getTenantViewRoles(User $record): string
+    {
+        $roles = $record->rolesWithTeams ?? collect();
+
+        if ($roles->isEmpty()) {
+            return '—';
+        }
+
+        $firstRole = $roles->first();
+
+        return $firstRole ? self::getRoleLabel($firstRole->name) : '—';
+    }
+
+    private static function getRoleLabel(string $name): string
+    {
+        return OrganizationRole::tryFrom($name)?->getLabel() ?? $name;
+    }
+}

@@ -1733,3 +1733,7 @@ body[data-phase="encerrada"] .vt-live-status strong { color: var(--primary); }
 
     .vt-spinner { animation-duration: 1.6s; }
 }
+
+.vt-display :is(#navbar, #bottomBar, #rankControls .vt-search, [data-notice-login], #como-votar, #navLogin, #navUser) {
+  display: none;
+}
